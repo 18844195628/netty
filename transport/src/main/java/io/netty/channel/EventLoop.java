@@ -22,7 +22,7 @@ import io.netty.util.concurrent.OrderedEventExecutor;
  *
  * One {@link EventLoop} instance will usually handle more than one {@link Channel} but this may depend on
  * implementation details and internals.
- *
+ * Netty框架的主要线程使IO线程，线程模型设计的好坏，决定了系统的吞吐量/并发性/安全性等架构质量属性。
  */
 public interface EventLoop extends OrderedEventExecutor, EventLoopGroup {
     @Override

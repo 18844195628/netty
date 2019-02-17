@@ -153,30 +153,65 @@ public interface ChannelHandlerContext extends AttributeMap, ChannelInboundInvok
      */
     boolean isRemoved();
 
+    /**
+     * Channel注册事件
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelRegistered();
 
     @Override
     ChannelHandlerContext fireChannelUnregistered();
 
+    /**
+     * TCP链路建立成功，Channel激活事件.
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelActive();
 
+    /**
+     * TCP连接关闭，链路不可用通知事件.
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelInactive();
 
+    /**
+     * 异常通知事件.
+     * @param cause
+     * @return
+     */
     @Override
     ChannelHandlerContext fireExceptionCaught(Throwable cause);
 
+    /**
+     * 用户自定义事件.
+     * @param evt
+     * @return
+     */
     @Override
     ChannelHandlerContext fireUserEventTriggered(Object evt);
 
+    /**
+     * 读事件.
+     * @param msg
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelRead(Object msg);
 
+    /**
+     * 读操作完成通知事件.
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelReadComplete();
 
+    /**
+     * Channel的可写状态变化通知事件.
+     * @return
+     */
     @Override
     ChannelHandlerContext fireChannelWritabilityChanged();
 

@@ -75,7 +75,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     }
 
     /**
-     * The {@link EventLoopGroup} which is used to handle all the events for the to-be-created
+     * The {@link EventLoopGroup} which is used to handle all the events for the to-be-created.
+     * 设置用于处理Channel所有事件的EventLoopGroup.
      * {@link Channel}
      */
     public B group(EventLoopGroup group) {
@@ -98,6 +99,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
      * The {@link Class} which is used to create {@link Channel} instances from.
      * You either use this or {@link #channelFactory(io.netty.channel.ChannelFactory)} if your
      * {@link Channel} implementation has no no-args constructor.
+     * channel()方法指定了Channel的实现类。如果该实现类没提供默认的构造函数，可以通过调用ChannelFactory()方法来指定一个工厂类，它将会被bind()方法调用。
      */
     public B channel(Class<? extends C> channelClass) {
         if (channelClass == null) {
@@ -136,6 +138,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
     /**
      * The {@link SocketAddress} which is used to bind the local "end" to.
+     * 指定Channel应该绑定到的本地地址。如果没有指定，将由操作系统创建一个随机的地址，
+     *      或者，也可以通过Bind()或者connect()方法指定localAddress.
      */
     public B localAddress(SocketAddress localAddress) {
         this.localAddress = localAddress;
@@ -166,6 +170,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * Allow to specify a {@link ChannelOption} which is used for the {@link Channel} instances once they got
      * created. Use a value of {@code null} to remove a previous set {@link ChannelOption}.
+     * 设置ChannelOption，其将被应用到每个新创建的Channel的ChannelConfig。这些选项将会通过通过bind()或者connect()方法设置到Channel，
+     *      不管哪个先被调用。这些方法在Channel已经被创建后再调用将不会由任何效果。支持的ChannelOption取决于使用的Channel类型。
      */
     public <T> B option(ChannelOption<T> option, T value) {
         if (option == null) {
@@ -186,6 +192,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     /**
      * Allow to specify an initial attribute of the newly created {@link Channel}.  If the {@code value} is
      * {@code null}, the attribute of the specified {@code key} is removed.
+     * 指定新创建的Channel的属性值。这些属性值是通过bind()或者connect()方法设置到Channel的，具体取决于谁最先被调用。
+     *      这个方法在Channel被创建后将不会有任何的效果。
      */
     public <T> B attr(AttributeKey<T> key, T value) {
         if (key == null) {
@@ -221,6 +229,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
      * Returns a deep clone of this bootstrap which has the identical configuration.  This method is useful when making
      * multiple {@link Channel}s with similar settings.  Please note that this method does not clone the
      * {@link EventLoopGroup} deeply but shallowly, making the group a shared resource.
+     * 创建一个当前的Bootstrap的克隆，其具有和原始的Bootstrap相同的设置信息.
      */
     @Override
     @SuppressWarnings("CloneDoesntDeclareCloneNotSupportedException")
@@ -236,6 +245,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
     /**
      * Create a new {@link Channel} and bind it.
+     * 绑定Channel并返回一个ChannelFuture,其将会在绑定操作完成后接收到通知，在那之后必须调用Channel.connect()方法来建立连接。
      */
     public ChannelFuture bind() {
         validate();
@@ -373,6 +383,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
 
     /**
      * the {@link ChannelHandler} to use for serving the requests.
+     * 设置将被添加到ChannelPipeline以接收事件通知的ChannelHandler。
      */
     public B handler(ChannelHandler handler) {
         if (handler == null) {

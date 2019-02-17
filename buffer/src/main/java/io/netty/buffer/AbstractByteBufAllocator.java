@@ -263,6 +263,7 @@ public abstract class AbstractByteBufAllocator implements ByteBufAllocator {
             return threshold;
         }
 
+        //如果新申请的内存空间大于阈值，不能采用倍增的方式（防止内存膨胀和浪费）扩张内存，而采用内次步进4MB的方式进行内存扩张。
         // If over threshold, do not double but just increase by threshold.
         if (minNewCapacity > threshold) {
             int newCapacity = minNewCapacity / threshold * threshold;

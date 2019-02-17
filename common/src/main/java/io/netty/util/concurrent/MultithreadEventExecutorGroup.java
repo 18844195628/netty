@@ -157,6 +157,7 @@ public abstract class MultithreadEventExecutorGroup extends AbstractEventExecuto
      */
     protected abstract EventExecutor newChild(Executor executor, Object... args) throws Exception;
 
+    //循环调用NioEventLoopGroup中的每个NioEventLoop,执行他们的shutdownGracefully方法.
     @Override
     public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit) {
         for (EventExecutor l: children) {

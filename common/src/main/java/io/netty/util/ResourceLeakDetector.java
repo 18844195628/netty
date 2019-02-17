@@ -39,6 +39,10 @@ import static io.netty.util.internal.StringUtil.EMPTY_STRING;
 import static io.netty.util.internal.StringUtil.NEWLINE;
 import static io.netty.util.internal.StringUtil.simpleClassName;
 
+/**
+ * 将会对应用程序的缓冲区分配做大约1%的采样来检测内存泄漏.
+ * @param <T>
+ */
 public class ResourceLeakDetector<T> {
 
     private static final String PROP_LEVEL_OLD = "io.netty.leakDetectionLevel";
@@ -57,25 +61,32 @@ public class ResourceLeakDetector<T> {
 
     /**
      * Represents the level of resource leak detection.
+     * 使用内部枚举类定义了资源泄漏的级别.
+     * 泄露检测级别可以通过将下面的Java系统属性设置为表中的一个值来定义;
+     *      java -Dio.netty.leakDetectionLevel=ADVANCED
      */
     public enum Level {
         /**
          * Disables resource leak detection.
+         * 禁用泄漏检测，只有在详尽的测试后才应设置为这个值。
          */
         DISABLED,
         /**
          * Enables simplistic sampling resource leak detection which reports there is a leak or not,
          * at the cost of small overhead (default).
+         * 使用1%的默认采样率检测并报告任何发现的泄漏。这是默认的级别，适合绝大多数的情况。
          */
         SIMPLE,
         /**
          * Enables advanced sampling resource leak detection which reports where the leaked object was accessed
          * recently at the cost of high overhead.
+         * 使用默认的采样率，报告所发现的任何的泄漏以及对应的消息被访问的位置。
          */
         ADVANCED,
         /**
          * Enables paranoid resource leak detection which reports where the leaked object was accessed recently,
          * at the cost of the highest possible overhead (for testing purposes only).
+         * 类似于ADVANCED，但是其将会对每次（对消息的）访问都进行采样。这对性能会有很大的影响，应该只是调试阶段使用。
          */
         PARANOID;
 
@@ -84,6 +95,7 @@ public class ResourceLeakDetector<T> {
          *
          * @param levelStr - level string : DISABLED, SIMPLE, ADVANCED, PARANOID. Ignores case.
          * @return corresponding level or SIMPLE level in case of no match.
+         * 通过字符串获取实例枚举对象的常用写法。
          */
         static Level parseLevel(String levelStr) {
             String trimmedLevelStr = levelStr.trim();
@@ -102,7 +114,7 @@ public class ResourceLeakDetector<T> {
 
     static {
         final boolean disabled;
-        if (SystemPropertyUtil.get("io.netty.noResourceLeakDetection") != null) {
+        if (SystemPropertyUtil.get("io.netty.noResourceLeakDetection") != null) {       //读取Java系统属性设置，是否禁用泄露检测
             disabled = SystemPropertyUtil.getBoolean("io.netty.noResourceLeakDetection", false);
             logger.debug("-Dio.netty.noResourceLeakDetection: {}", disabled);
             logger.warn(
@@ -114,10 +126,10 @@ public class ResourceLeakDetector<T> {
 
         Level defaultLevel = disabled? Level.DISABLED : DEFAULT_LEVEL;
 
-        // First read old property name
-        String levelStr = SystemPropertyUtil.get(PROP_LEVEL_OLD, defaultLevel.name());
+        // First read old property name  旧属性的写法
+        String levelStr = SystemPropertyUtil.get(PROP_LEVEL_OLD, defaultLevel.name());  //读取Java系统设置，获取泄露检测级别。
 
-        // If new property name is present, use it
+        // If new property name is present, use it  新属性的写法
         levelStr = SystemPropertyUtil.get(PROP_LEVEL, levelStr);
         Level level = Level.parseLevel(levelStr);
 
@@ -143,7 +155,7 @@ public class ResourceLeakDetector<T> {
      * Returns {@code true} if resource leak detection is enabled.
      */
     public static boolean isEnabled() {
-        return getLevel().ordinal() > Level.DISABLED.ordinal();
+        return getLevel().ordinal() > Level.DISABLED.ordinal();     //枚举类默认有个顺序值
     }
 
     /**

@@ -892,9 +892,9 @@ public abstract class AbstractByteBuf extends ByteBuf {
 
     @Override
     public ByteBuf readBytes(byte[] dst, int dstIndex, int length) {
-        checkReadableBytes(length);
+        checkReadableBytes(length);     //在读之前，首先对缓冲区的可用空间进行校验
         getBytes(readerIndex, dst, dstIndex, length);
-        readerIndex += length;
+        readerIndex += length;          //如果读取成功，需要对读索引进行递增
         return this;
     }
 
